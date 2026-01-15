@@ -12,10 +12,8 @@ export class Tema {
   @Column({ length: 140, nullable: false })
   descricao: string;
 
-
+// aqui eu indico para quem ele vai apontar. no caso, postagem apontando para o tema
   @OneToMany(() => Postagem, (postagem) => postagem.tema)
   postagem: Postagem[]
-
-
 
 }

@@ -2,16 +2,25 @@ import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Postagem } from "../entities/postagem.entity";
 import { DeleteResult, ILike, Repository } from "typeorm";
+import { TemaService } from "../../tema/services/tema.service";
+
 
 @Injectable()
 export class PostagemService {
     constructor(
         @InjectRepository(Postagem)
-        private postagemRepository: Repository<Postagem>
+        private postagemRepository: Repository<Postagem>,
+        private temaService:TemaService
+       
     ) { }
 
     async findall(): Promise<Postagem[]> {
-        return await this.postagemRepository.find();
+        return await this.postagemRepository.find({
+            relations:{
+                tema: true
+            }
+        });
+            
     }
 
     //Metodo para buscar postagens
@@ -19,10 +28,13 @@ export class PostagemService {
     // get por ID
     async findById(id: number): Promise<Postagem> {
         // Procura no banco de dados pela postagem e guarda o resultado na variavel
-        const postagem = await this.postagemRepository.findOne({
+        let postagem = await this.postagemRepository.findOne({
             where: {
                 id,
             },
+             relations:{
+                tema: true
+            }
         });
 
 
@@ -41,12 +53,17 @@ export class PostagemService {
         return await this.postagemRepository.find({
             where:{
                 titulo: ILike(`%${titulo}%`)
+            },
+            relations:{
+                tema: true
             }
         })
     }
 
     //Método para criar postagem
     async create(postagem: Postagem): Promise<Postagem> {
+
+        await this.temaService.findById(postagem.tema.id)
         return await this.postagemRepository.save(postagem);
     }
 
@@ -54,6 +71,8 @@ export class PostagemService {
     async update(postagem: Postagem): Promise<Postagem>{
 
         await this.findById(postagem.id)
+
+        await this.temaService.findById(postagem.tema.id)
 
         //se deu tudo certo e a postagem foi encontrada o metodo save() entra em ação e salva a mudança
         //No comando return, o await também é utilizado, indicando que a execução aguardará a conclusão da atualização antes de retornar a resposta para a classe que chamou o método.

@@ -24,7 +24,10 @@ export class Postagem {
   @UpdateDateColumn()
   data: Date;
 
+  // aqui eu indico para quem ele vai apontar. no caso, tema apontando para postagem
   @ManyToOne(()=> Tema, (tema)=> tema.postagem, {
+    // Aqui é uma opção de efeito cascata. neste caso, se eu apago a tabela tema, ele apaga junto todas as postagens relacioadas a esse tema;
+    //Ou seja, o cascade so colocamos do lado N(muitos) do relacionamento
     onDelete: 'CASCADE'
   })
   tema: Tema;
