@@ -8,32 +8,40 @@ import {
 } from 'typeorm';
 import { Tema } from '../../tema/entities/tema.entity';
 import { Usuario } from '../../usuario/entities/usuario.entity';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Entity({ name: 'tb_postagens' })
 export class Postagem {
-  @PrimaryGeneratedColumn()
-  id: number;
 
-  @IsNotEmpty()
-  @Column({ length: 100, nullable: false })
-  titulo: string;
+    @ApiProperty()  
+    @PrimaryGeneratedColumn()    
+    id: number
 
-  @IsNotEmpty()
-  @Column({ length: 1000, nullable: false })
-  texto: string;
+    @ApiProperty()  
+    @IsNotEmpty()
+    @Column({length: 100, nullable: false})
+    titulo: string
 
-  @UpdateDateColumn()
-  data: Date;
+    @ApiProperty()  
+    @IsNotEmpty()
+    @Column({length: 1000, nullable: false})
+    texto: string
+
+    @ApiProperty()  
+    @UpdateDateColumn()
+    data: Date
 
   // aqui eu indico para quem ele vai apontar. no caso, tema apontando para postagem
-  @ManyToOne(()=> Tema, (tema)=> tema.postagem, {
+    @ApiProperty() 
+    @ManyToOne(()=> Tema, (tema)=> tema.postagem, {
     // Aqui é uma opção de efeito cascata. neste caso, se eu apago a tabela tema, ele apaga junto todas as postagens relacioadas a esse tema;
     //Ou seja, o cascade so colocamos do lado N(muitos) do relacionamento
     onDelete: 'CASCADE'
-  })
-  tema: Tema;
+    })
+    tema: Tema;
 
-  @ManyToOne(() => Usuario, (usuario) => usuario.postagem, {
+   @ApiProperty()  
+   @ManyToOne(() => Usuario, (usuario) => usuario.postagem, {
     onDelete: "CASCADE"
   })
   usuario: Usuario
